@@ -7,6 +7,7 @@ along with configurable timeout management.
 
 import asyncio
 import atexit
+import os
 import secrets
 import time
 from collections.abc import Callable
@@ -43,14 +44,16 @@ def _validate_url(url: str) -> str:
 def _get_default_client() -> httpx.Client:
     global _DEFAULT_CLIENT
     if _DEFAULT_CLIENT is None or _DEFAULT_CLIENT.is_closed:
-        _DEFAULT_CLIENT = httpx.Client(limits=_POOL_LIMITS)
+        proxy = os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY") or None
+        _DEFAULT_CLIENT = httpx.Client(limits=_POOL_LIMITS, proxy=proxy)
     return _DEFAULT_CLIENT
 
 
 async def _get_default_async_client() -> httpx.AsyncClient:
     global _DEFAULT_ASYNC_CLIENT
     if _DEFAULT_ASYNC_CLIENT is None or _DEFAULT_ASYNC_CLIENT.is_closed:
-        _DEFAULT_ASYNC_CLIENT = httpx.AsyncClient(limits=_POOL_LIMITS)
+        proxy = os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY") or None
+        _DEFAULT_ASYNC_CLIENT = httpx.AsyncClient(limits=_POOL_LIMITS, proxy=proxy)
     return _DEFAULT_ASYNC_CLIENT
 
 

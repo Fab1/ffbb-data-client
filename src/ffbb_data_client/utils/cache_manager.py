@@ -12,6 +12,7 @@ This module provides sophisticated caching strategies including:
 from __future__ import annotations
 
 import hashlib
+import os
 import threading
 from dataclasses import dataclass
 from typing import Any, cast
@@ -170,6 +171,7 @@ class CacheManager:
         # ⚡ Optimisation des performances réseau : connection pooling robuste pour HTTPX
         # Permet de maintenir les sockets TLS chauds et d'éviter les handshakes répétés
         limits = httpx.Limits(max_keepalive_connections=50, max_connections=200)
+        proxy = os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY") or None
 
         if self.config.backend == "memory":
             import sqlite3
@@ -185,7 +187,7 @@ class CacheManager:
                 storage=storage,
                 policy=policy,
                 transport=httpx.HTTPTransport(
-                    retries=self.config.transport_retries, limits=limits
+                    retries=self.config.transport_retries, limits=limits, proxy=proxy
                 ),
             )
             # Async version uses its own connection
@@ -196,7 +198,7 @@ class CacheManager:
                 storage=async_storage,
                 policy=policy,
                 transport=httpx.AsyncHTTPTransport(
-                    retries=self.config.transport_retries, limits=limits
+                    retries=self.config.transport_retries, limits=limits, proxy=proxy
                 ),
             )
         elif self.config.backend == "sqlite":
@@ -209,7 +211,7 @@ class CacheManager:
                 storage=storage,
                 policy=policy,
                 transport=httpx.HTTPTransport(
-                    retries=self.config.transport_retries, limits=limits
+                    retries=self.config.transport_retries, limits=limits, proxy=proxy
                 ),
             )
             # Async version uses its own database file
@@ -221,7 +223,7 @@ class CacheManager:
                 storage=async_storage,
                 policy=policy,
                 transport=httpx.AsyncHTTPTransport(
-                    retries=self.config.transport_retries, limits=limits
+                    retries=self.config.transport_retries, limits=limits, proxy=proxy
                 ),
             )
         else:
