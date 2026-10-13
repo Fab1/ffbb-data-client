@@ -127,68 +127,85 @@ class TokenManager:
         """Fetch configuration without persisting its bearer tokens in HTTP cache."""
         from ..helpers.http_requests_utils import _is_bunnycdn_block
 
-        config_url = f"{API_FFBB_BASE_URL}{ENDPOINT_CONFIGURATION}"
+        candidate_hosts = [
+            API_FFBB_BASE_URL,
+            "https://bo.ffbb.com/",
+            "https://bo.ffbb.app/",
+            "https://api.ffbb.app/",
+        ]
+        urls_to_try: list[str] = []
+        for h in candidate_hosts:
+            u = f"{h.rstrip('/')}/{ENDPOINT_CONFIGURATION}"
+            if u not in urls_to_try:
+                urls_to_try.append(u)
+
         candidate_user_agents = [DEFAULT_USER_AGENT] + [
             ua for ua in FALLBACK_USER_AGENTS if ua != DEFAULT_USER_AGENT
         ]
 
         last_error: Exception | None = None
-        for ua in candidate_user_agents:
-            headers = {"user-agent": ua}
+        for config_url in urls_to_try:
+            for ua in candidate_user_agents:
+                headers = {"user-agent": ua}
 
-            def _get_json() -> dict[str, Any]:
-                response = make_http_request_with_retry(
-                    "GET",
-                    config_url,
-                    headers,
-                    cached_session=None,
-                    retry_config=get_default_retry_config(),
-                    timeout_config=get_default_timeout_config(),
-                )
-                if response.status_code == 403 and _is_bunnycdn_block(response):
-                    raise FFBBAuthenticationError(
-                        f"Blocked by BunnyCDN WAF on User-Agent: {ua}",
-                        status_code=403,
+                def _get_json() -> dict[str, Any]:
+                    response = make_http_request_with_retry(
+                        "GET",
+                        config_url,
+                        headers,
+                        cached_session=None,
+                        retry_config=get_default_retry_config(),
+                        timeout_config=get_default_timeout_config(),
                     )
-                response.raise_for_status()
+                    if response.status_code == 403 and _is_bunnycdn_block(response):
+                        raise FFBBAuthenticationError(
+                            f"Blocked by BunnyCDN WAF on User-Agent: {ua}",
+                            status_code=403,
+                        )
+                    response.raise_for_status()
+
+                    try:
+                        import orjson  # type: ignore
+
+                        return cast(dict[str, Any], orjson.loads(response.text.strip()))
+                    except ImportError:
+                        try:
+                            import ujson  # type: ignore
+
+                            return cast(
+                                dict[str, Any], ujson.loads(response.text.strip())
+                            )
+                        except ImportError:
+                            return cast(
+                                dict[str, Any], json.loads(response.text.strip())
+                            )
 
                 try:
-                    import orjson  # type: ignore
+                    data = _catch_result(_get_json)
+                    actual_data = (
+                        data.get("data") if data and isinstance(data, dict) else data
+                    )
+                    if not actual_data:
+                        continue
 
-                    return cast(dict[str, Any], orjson.loads(response.text.strip()))
-                except ImportError:
-                    try:
-                        import ujson  # type: ignore
-
-                        return cast(dict[str, Any], ujson.loads(response.text.strip()))
-                    except ImportError:
-                        return cast(dict[str, Any], json.loads(response.text.strip()))
-
-            try:
-                data = _catch_result(_get_json)
-                actual_data = (
-                    data.get("data") if data and isinstance(data, dict) else data
-                )
-                if not actual_data:
-                    raise RuntimeError("Failed to fetch configuration from FFBB API")
-
-                return GetConfigurationResponse.from_dict(actual_data)
-            except FFBBAuthenticationError as cdn_exc:
-                logger.warning(
-                    f"BunnyCDN WAF blocked configuration fetch with UA '{ua}'. "
-                    f"Attempting next fallback User-Agent..."
-                )
-                last_error = cdn_exc
-                continue
-            except PydanticValidationError as exc:
-                raise FFBBResponseValidationError(
-                    "FFBB configuration response is missing valid bearer tokens"
-                ) from exc
-            except Exception:
-                raise
+                    return GetConfigurationResponse.from_dict(actual_data)
+                except FFBBAuthenticationError as cdn_exc:
+                    logger.warning(
+                        f"BunnyCDN WAF blocked configuration fetch on {config_url} with UA '{ua}'. "
+                        f"Attempting next fallback..."
+                    )
+                    last_error = cdn_exc
+                    continue
+                except PydanticValidationError as exc:
+                    raise FFBBResponseValidationError(
+                        "FFBB configuration response is missing valid bearer tokens"
+                    ) from exc
+                except Exception as exc:
+                    last_error = exc
+                    continue
 
         if last_error:
             raise RuntimeError(
-                f"Failed to fetch configuration from FFBB API (all User-Agents blocked): {last_error}"
+                f"Failed to fetch configuration from FFBB API (all endpoints/User-Agents blocked): {last_error}"
             ) from last_error
         raise RuntimeError("Failed to fetch configuration from FFBB API")
