@@ -12181,7 +12181,7 @@
   "info": {
     "description": "This is a dynamically generated API specification for all endpoints existing on the current project.",
     "title": "Dynamic API Specification",
-    "version": "5e5f138eae2de296226e37d6c0ac5a9ee7a96f2e"
+    "version": "4aa55950ce1db53a17db2c04c935dc112989a92c"
   },
   "openapi": "3.0.1",
   "paths": {
@@ -36848,7 +36848,7 @@
   "servers": [
     {
       "description": "Your current Directus instance.",
-      "url": "https://api.ffbb.com/"
+      "url": "https://bo.ffbb.com/"
     }
   ],
   "tags": [
