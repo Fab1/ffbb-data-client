@@ -1,5 +1,15 @@
 # Release Notes - FFBB Data Client
 
+## Version 2.4.37 (Latest Release)
+
+### 🚀 Directus Production Origin (`bo.ffbb.com`) & Multi-Mirror Failover
+- **Definitive 403 Elimination**: Switched Directus base origin from deprecated `https://api.ffbb.app/` to `https://bo.ffbb.com/` (with automatic failover to `https://bo.ffbb.app/`), bypassing all BunnyCDN WAF 403 Forbidden lockouts.
+- **Dynamic Mirror Resolution**: Transparent fallback mechanism across official backend mirrors on transient failures.
+- **Environment Configuration**: Added first-class support for `API_FFBB_BASE_URL`, `FFBB_USER_AGENT`, `HTTP_PROXY`, and `HTTPS_PROXY`.
+- **Egress & Proxy Alignment**: Synchronized environment proxy detection between sync (`hishel`) and async transports.
+
+---
+
 ## Version 2.4.6 (Latest Release)
 
 ### 🚀 FastAPI Lifespan & Connection Cleanup

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.37] - 2026-10-13
+
+### Architecture & Resilience (Directus Production bo.ffbb.com & Multi-Mirror Failover)
+- **Directus bo.ffbb.com Migration**: Bascule de l'origine Directus par defaut de `https://api.ffbb.app/` vers `https://bo.ffbb.com/` (et fallback miroir `https://bo.ffbb.app/`), eliminant definitivement le blocage HTTP 403 Forbidden cause par le verrouillage CDN de l'ancienne pullzone BunnyCDN (5204911).
+- **Multi-Mirror Dynamic Failover**: Mecanisme de fallback automatique entre serveurs miroirs en cas d'indisponibilite ou d'erreur reseau temporaire.
+- **Environment Variables Overrides**: Prise en compte de `API_FFBB_BASE_URL` et `FFBB_USER_AGENT` pour surcharger la configuration reseau sans modifier le code client.
+- **Sync & Async Transport Parity**: Alignement rigoureux des transports `httpx.Client` et `httpx.AsyncClient` sur la configuration proxy d'environnement (`HTTP_PROXY`, `HTTPS_PROXY`).
+
+
 ## [2.4.35] - 2026-10-10
 
 ### Fixes & Resilience (BunnyCDN WAF Fallback & Async Retries)
