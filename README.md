@@ -47,7 +47,7 @@
 
 | Fonctionnalité | Ancien client (`ffbb-api-client`) | **`ffbb-data-client` (v2.4+)** |
 | :--- | :---: | :---: |
-| **Bypass WAF BunnyCDN** (anti-403) | ❌ Bloqué en 403 Forbidden | ✅ **Garanti (okhttp/4.12.0 emulated)** |
+| **Origine Directus & Anti-403** | ❌ Bloqué en 403 Forbidden (BunnyCDN) | ✅ **Origine directe `bo.ffbb.com` + multi-miroirs** |
 | **Architecture Asynchrone Native** | ❌ 100% bloquant / synchrone | ✅ **Async native (`async/await` + `aiter`)** |
 | **Modèles de Données & Typage** | ❌ Dictionnaires bruts sans type | ✅ **Dataclasses & Pydantic v2 validés** |
 | **Recherche Meilisearch Instantanée** | ❌ Partielle ou absente | ✅ **Multi-index (Clubs, Salles, Poules, 3x3)** |
@@ -285,10 +285,25 @@ Accédez ensuite à la documentation Swagger interactive sur `http://localhost:8
 
 ## 🛠️ Robustesse, CI/CD & Découverte Quotidienne
 
-* **Protection BunnyCDN** : User-Agent garanti `okhttp/4.12.0` pour éviter tout blocage WAF 403.
+* **Origine Directus & Anti-403** : Bascule native vers l'origine Directus `https://bo.ffbb.com/` (et fallback miroir `https://bo.ffbb.app/`) avec User-Agent mobile Safari authentique, éliminant définitivement les erreurs 403 Forbidden de l'ancienne pullzone BunnyCDN.
+* **Auto-Résolution des Tokens** : Découverte et rotation dynamiques des jetons Bearer Directus et Meilisearch sans configuration requise.
 * **Découverte Quotidienne du Schéma** : Un cron GitHub Actions analyse chaque matin à 5h17 UTC l'OpenAPI spec officielle de la FFBB et détecte automatiquement tout nouveau champ ou collection Directus.
 * **Cache Intelligent Sécurisé** : Gestionnaire de cache HTTP `hishel` avec SQLite distinct pour les flux synchrones et asynchrones.
 * **CodeQL & Zéro Dette** : Conformité aux normes de sécurité, zéro alerte d'injection de log, 100% typé.
+
+---
+
+## ⚙️ Configuration & Variables d'Environnement
+
+Le SDK fonctionne instantanément sans configuration. Des variables d'environnement permettent de surcharger les comportements réseaux si nécessaire :
+
+| Variable | Description | Valeur par défaut |
+| :--- | :--- | :--- |
+| `API_FFBB_BASE_URL` | URL de base du backend Directus | `https://bo.ffbb.com/` |
+| `FFBB_USER_AGENT` | En-tête User-Agent transmis aux requêtes | iOS Safari Mobile |
+| `API_FFBB_APP_BEARER_TOKEN` | Jeton Directus explicite (override l'auto-résolution) | Auto-résolu dynamiquement |
+| `MEILISEARCH_BEARER_TOKEN` | Jeton Meilisearch explicite (override l'auto-résolution) | Auto-résolu dynamiquement |
+| `HTTP_PROXY` / `HTTPS_PROXY` | Proxy HTTP/HTTPS sortant (ex: swarm / environnement conteneurisé) | Aucun |
 
 ---
 
