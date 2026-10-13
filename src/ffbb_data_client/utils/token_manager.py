@@ -204,6 +204,55 @@ class TokenManager:
                     last_error = exc
                     continue
 
+        # Ultimate autonomous fallback: probe official ffbb.com Next.js bundles for live origins
+        try:
+            from .web_probe import probe_ffbb_web_origins
+
+            probe_res = probe_ffbb_web_origins()
+            discovered_candidates = [
+                cand
+                for cand in probe_res.get("healthy_directus_urls", [])
+                if cand not in candidate_hosts
+            ]
+            if discovered_candidates:
+                logger.info(
+                    "Attempting autonomous fallback via %d live origins discovered from Next.js web bundle: %s",
+                    len(discovered_candidates),
+                    discovered_candidates,
+                )
+                for cand_host in discovered_candidates:
+                    discovered_config_url = (
+                        f"{cand_host.rstrip('/')}/{ENDPOINT_CONFIGURATION}"
+                    )
+                    for ua in candidate_user_agents:
+                        headers = {"user-agent": ua}
+                        try:
+                            resp = make_http_request_with_retry(
+                                "GET",
+                                discovered_config_url,
+                                headers,
+                                cached_session=None,
+                                retry_config=get_default_retry_config(),
+                                timeout_config=get_default_timeout_config(),
+                            )
+                            if resp.status_code == 200:
+                                import json as _json
+
+                                try:
+                                    import orjson as _oj
+
+                                    d = _oj.loads(resp.text.strip())
+                                except ImportError:
+                                    d = _json.loads(resp.text.strip())
+                                act_data = d.get("data") if isinstance(d, dict) else d
+                                if act_data:
+                                    return GetConfigurationResponse.from_dict(act_data)
+                        except Exception as rec_exc:
+                            last_error = rec_exc
+                            continue
+        except Exception as probe_err:
+            logger.debug("Next.js web bundle fallback probe failed: %s", probe_err)
+
         if last_error:
             raise RuntimeError(
                 f"Failed to fetch configuration from FFBB API (all endpoints/User-Agents blocked): {last_error}"

@@ -329,9 +329,9 @@
       "items/youtube_videos_youtube_tags"
     ],
     "metadata": {
-      "openapi_version": "4aa55950ce1db53a17db2c04c935dc112989a92c",
+      "openapi_version": "d7c8f0b3195fb0535eabd9d05c510a002d838c9a",
       "source": "https://bo.ffbb.com/server/specs/oas",
-      "timestamp": "2026-10-13T12:09:11.118613+00:00"
+      "timestamp": "2026-10-13T12:17:56.973628+00:00"
     },
     "paths": {
       "items/configuration": [
@@ -1926,7 +1926,7 @@
     ],
     "metadata": {
       "source": "https://meilisearch-prod.ffbb.app/multi-search",
-      "timestamp": "2026-10-13T12:09:11.118613+00:00"
+      "timestamp": "2026-10-13T12:17:56.973628+00:00"
     },
     "unavailable_indexes": [
       {
@@ -2665,10 +2665,38 @@
   },
   "metadata": {
     "api_base_url": "https://bo.ffbb.com/",
+    "configured_api_base_url": "https://bo.ffbb.com/",
     "meilisearch_base_url": "https://meilisearch-prod.ffbb.app/",
-    "openapi_sha256": "26d5d296f0307fff092123453ec40c30d2985461e600373f944928a7bf9b9783",
-    "openapi_snapshot_sha256": "023cee7b018aed058369ca6757cfa08c823328ebe64f1e055dca22387b862bce",
-    "openapi_version": "4aa55950ce1db53a17db2c04c935dc112989a92c",
-    "timestamp": "2026-10-13T12:09:11.118613+00:00"
+    "openapi_sha256": "845c3e397ddc6d238069f38b23b08438893470c106a22c3292508fd7eb8c8188",
+    "openapi_snapshot_sha256": "537234c1f5b7d75615b0cafaf1775634a3226c2043310195c61fcea0656a84eb",
+    "openapi_version": "d7c8f0b3195fb0535eabd9d05c510a002d838c9a",
+    "timestamp": "2026-10-13T12:17:56.973628+00:00",
+    "web_probe": {
+      "all_ffbb_hosts": [
+        "https://api.ffbb.app",
+        "https://api.ffbb.com",
+        "https://bo.ffbb.app",
+        "https://bo.ffbb.com",
+        "https://competitions.ffbb.com",
+        "https://meilisearch-prod.ffbb.app",
+        "https://statics.ffbb.app",
+        "https://www.ffbb.com"
+      ],
+      "directus_bo_urls": [
+        "https://bo.ffbb.com/",
+        "https://bo.ffbb.app/"
+      ],
+      "healthy_directus_urls": [
+        "https://bo.ffbb.com/",
+        "https://bo.ffbb.app/"
+      ],
+      "meilisearch_urls": [
+        "https://meilisearch-prod.ffbb.app"
+      ],
+      "scanned_chunks_count": 17,
+      "statics_urls": [
+        "https://statics.ffbb.app"
+      ]
+    }
   }
 }
