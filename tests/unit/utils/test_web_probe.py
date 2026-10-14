@@ -46,11 +46,16 @@ def test_probe_ffbb_web_origins_success():
 
         result = probe_ffbb_web_origins(web_url="https://www.ffbb.com", timeout=2.0)
 
-        assert "https://bo.ffbb.com/" in result["directus_bo_urls"]
-        assert "https://bo.ffbb.app/" in result["directus_bo_urls"]
-        assert "https://bo.ffbb.com/" in result["healthy_directus_urls"]
-        assert "https://meilisearch-prod.ffbb.app" in result["meilisearch_urls"]
-        assert "https://statics.ffbb.app" in result["statics_urls"]
+        bo_urls = list(result["directus_bo_urls"])
+        healthy_urls = list(result["healthy_directus_urls"])
+        meili_urls = list(result["meilisearch_urls"])
+        statics = list(result["statics_urls"])
+
+        assert any(u == "https://bo.ffbb.com/" for u in bo_urls)
+        assert any(u == "https://bo.ffbb.app/" for u in bo_urls)
+        assert any(u == "https://bo.ffbb.com/" for u in healthy_urls)
+        assert any(u == "https://meilisearch-prod.ffbb.app" for u in meili_urls)
+        assert any(u == "https://statics.ffbb.app" for u in statics)
         assert result["scanned_chunks_count"] == 2
 
 
