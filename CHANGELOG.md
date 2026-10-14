@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.4.38] - 2026-10-14
+## [2.4.39] - 2026-10-14
 
 ### Features & Discovery
 - **Live Next.js Bundle Probing**: Ajout du module `web_probe.py` (`probe_ffbb_web_origins`) pour inspecter automatiquement les bundles Next.js de `https://www.ffbb.com` et auto-découvrir les URLs Directus, Meilisearch et statics en production.

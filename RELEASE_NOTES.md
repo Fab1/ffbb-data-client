@@ -1,6 +1,6 @@
 # Release Notes - FFBB Data Client
 
-## Version 2.4.38 (Latest Release)
+## Version 2.4.39 (Latest Release)
 
 ### 🚀 Live Next.js Bundle Probing & Automatic Origin Discovery
 - **Autonomous Origin Extraction**: Introduced `probe_ffbb_web_origins` in `ffbb_data_client.utils.web_probe` to dynamically parse Next.js chunks from `www.ffbb.com` and identify operational Directus (`bo.ffbb.com`, `bo.ffbb.app`) and Meilisearch endpoints.
@@ -12,7 +12,7 @@
 - **Zero BunnyCDN Fallback**: Completely expunged deprecated `api.ffbb.app` host references from configuration resolution.
 
 ### 🌐 Official Website & Metadata Sync
-- Synced `softwareVersion` and documentation links to v2.4.38.
+- Synced `softwareVersion` and documentation links to v2.4.39.
 
 ---
 

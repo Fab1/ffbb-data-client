@@ -157,7 +157,7 @@ l'ensemble des données publiques de la **Fédération Française de BasketBall*
 - ⭐ **Code Source GitHub** : [`https://github.com/nickdesi/ffbb-data-client`](https://github.com/nickdesi/ffbb-data-client)
 - 📖 **Documentation Sphinx complète** : [`https://nickdesi.github.io/ffbb-data-client/`](https://nickdesi.github.io/ffbb-data-client/)
 """,
-    version="2.4.38",
+    version="2.4.39",
     contact={
         "name": "FFBB Data Client — Support & Open Data",
         "url": "https://github.com/nickdesi/ffbb-data-client/issues",
