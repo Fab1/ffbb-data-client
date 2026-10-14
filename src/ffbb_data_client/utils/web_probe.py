@@ -141,8 +141,9 @@ def probe_ffbb_web_origins(
             with opener.open(hreq, timeout=min(5.0, timeout)) as hresp:
                 if hresp.status == 200:
                     healthy_directus_urls.append(candidate)
-        except Exception:
-            pass
+        except Exception as exc:
+            # Candidate directus back-office did not respond cleanly to health check
+            logger.debug("Directus health probe failed for %s: %s", candidate, exc)
 
     return {
         "healthy_directus_urls": healthy_directus_urls,
