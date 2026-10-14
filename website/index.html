@@ -81,18 +81,22 @@
           ],
           "applicationCategory": "SportsApplication, DeveloperApplication",
           "operatingSystem": "All",
-          "softwareVersion": "2.3.4",
+          "softwareVersion": "2.4.37",
+          "dateModified": "2026-10-14T08:00:00Z",
           "description": "SDK Python asynchrone et typé pour interroger l'API officielle de la Fédération Française de BasketBall : fiches clubs, championnats, poules, calendriers, classements et scores en direct.",
           "url": "https://ffbb-api.desimone.fr/",
           "downloadUrl": "https://pypi.org/project/ffbb-data-client/",
           "codeRepository": "https://github.com/nickdesi/ffbb-data-client",
           "programmingLanguage": "Python",
           "featureList": [
+            "Architecture multi-miroirs avec bascule automatique Directus (bo.ffbb.com & bo.ffbb.app)",
+            "Probe dynamique temps réel des chunks Next.js pour pérennité de l'API sans coupure",
+            "Endpoint Prometheus officiel (/metrics) pour le monitoring de latence et disponibilité",
             "Recherche Universelle Meilisearch (clubs, comités, compétitions, gymnases, arbitres)",
             "Scores en direct et temps forts du week-end (championnats nationaux, régionaux, départementaux)",
             "Fiches clubs complètes et détails des équipes engagées",
             "Calendriers et classements officiels FFBB",
-            "Client async/await httpx haute performance avec cache intelligent hishel"
+            "Client async/await httpx haute performance avec cache intelligent hishel SQLite"
           ],
           "image": "https://ffbb-api.desimone.fr/assets/logo.webp",
           "author": {
@@ -173,7 +177,7 @@
             </ul>
             <div class="nav-actions">
                 <a href="/docs" class="chip chip-mint" style="text-decoration: none; font-weight: 700;">⚡ Swagger UI (/docs)</a>
-                <a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener" class="chip chip-pypi">📦 PyPI v2.3.4</a>
+                <a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener" class="chip chip-pypi">📦 PyPI v2.4.37</a>
                 <a href="https://github.com/nickdesi/ffbb-data-client" target="_blank" rel="noopener" class="btn btn-primary btn-sm nav-gh-btn">⭐ GitHub</a>
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu de navigation" aria-expanded="false" onclick="toggleMobileMenu()">
                     <span class="bar"></span>
@@ -194,7 +198,7 @@
                 <li><a href="#faq" onclick="closeMobileMenu()">❓ Questions fréquentes (FAQ)</a></li>
             </ul>
             <div class="mobile-drawer-actions">
-                <a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener" class="chip chip-orange" style="justify-content: center; width: 100%; padding: 0.75rem;">📦 Package PyPI (v2.3.4)</a>
+                <a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener" class="chip chip-orange" style="justify-content: center; width: 100%; padding: 0.75rem;">📦 Package PyPI (v2.4.37)</a>
                 <a href="https://github.com/nickdesi/ffbb-data-client" target="_blank" rel="noopener" class="btn btn-primary" style="width: 100%;">⭐ GitHub Repository</a>
             </div>
         </div>
@@ -206,9 +210,10 @@
             <div class="container hero-grid">
                 <div>
                     <div class="hero-chips">
-                        <span class="chip chip-orange">🏀 API FFBB & OPEN DATA</span>
+                        <span class="chip chip-orange">🏀 API FFBB 2026</span>
                         <span class="chip chip-live"><span class="live-pulse"></span> SCORES EN DIRECT</span>
-                        <span class="chip chip-mint">⚡ ASYNC & TYPÉ</span>
+                        <span class="chip chip-mint">⚡ v2.4.37 ASYNC</span>
+                        <span class="chip chip-indigo">🛡️ bo.ffbb.com PROD</span>
                     </div>
                     <h1 class="hero-title">
                         L'API <span class="text-gradient">FFBB</span> moderne & Open Data du Basket Français.
@@ -436,10 +441,20 @@
                                 <td style="padding: 0.85rem 1rem; color: #34d399;">✅ Hishel SQLite configurable</td>
                                 <td style="padding: 0.85rem 1rem; color: #ef4444;">❌ Aucun cache ou basique</td>
                             </tr>
-                            <tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <td style="padding: 0.85rem 1rem; font-weight: 600;">🤖 Connecteur IA / MCP Server</td>
                                 <td style="padding: 0.85rem 1rem; color: #34d399;">✅ Compatible MCP natif</td>
                                 <td style="padding: 0.85rem 1rem; color: #ef4444;">❌ Incompatible</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 0.85rem 1rem; font-weight: 600;">🛡️ Résilience Directus & Anti-403</td>
+                                <td style="padding: 0.85rem 1rem; color: #34d399;">✅ Directus bo.ffbb.com + failover miroir & probe Next.js</td>
+                                <td style="padding: 0.85rem 1rem; color: #ef4444;">❌ Bloqué par WAF BunnyCDN (Erreur 403)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.85rem 1rem; font-weight: 600;">📈 Monitoring & Observabilité</td>
+                                <td style="padding: 0.85rem 1rem; color: #34d399;">✅ Métriques Prometheus (/metrics) & healthchecks</td>
+                                <td style="padding: 0.85rem 1rem; color: #ef4444;">❌ Aucune métrique</td>
                             </tr>
                         </tbody>
                     </table>
@@ -632,7 +647,7 @@ asyncio.<span style="color: #d2a8ff;">run</span>(main())</code></pre>
                 <div class="footer-col">
                     <h4>Ressources API</h4>
                     <ul>
-                        <li><a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener">Package PyPI (v2.3.4)</a></li>
+                        <li><a href="https://pypi.org/project/ffbb-data-client/" target="_blank" rel="noopener">Package PyPI (v2.4.37)</a></li>
                         <li><a href="https://github.com/nickdesi/ffbb-data-client" target="_blank" rel="noopener">Code Source GitHub</a></li>
                         <li><a href="https://github.com/nickdesi/ffbb-data-client/releases" target="_blank" rel="noopener">Versions & Mises à jour</a></li>
                         <li><a href="https://github.com/nickdesi/ffbb-data-client/issues" target="_blank" rel="noopener">Signaler un bug / Support</a></li>

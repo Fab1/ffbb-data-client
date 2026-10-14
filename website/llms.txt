@@ -2,7 +2,7 @@
 > SDK Python moderne, typé et asynchrone pour explorer l'ensemble des données publiques de la Fédération Française de BasketBall (FFBB).
 
 ## Documentation et Liens
-- Site officiel : https://nickdesi.github.io/ffbb-data-client/
+- Site officiel : https://ffbb-api.desimone.fr/
 - Dépôt GitHub : https://github.com/nickdesi/ffbb-data-client
 - Package PyPI : https://pypi.org/project/ffbb-data-client/
 - Serveur MCP : https://ffbb.desimone.fr/
@@ -12,6 +12,8 @@
 - **Fiches Clubs & Organismes** : Coordonnées, équipes engagées, gymnases rattachés, couleurs officielles.
 - **Compétitions & Poules** : Calendriers, résultats de toutes les journées, classements officiels mis à jour, feuilles de match.
 - **Scores en Direct (Lives)** : Suivi en temps réel des matchs en cours du week-end sur tous les championnats (Nationale, Régionale, Départementale).
+- **Résilience & Production 2026** : Connexion directe au backend Directus `bo.ffbb.com` (contournement WAF 403), failover multi-miroirs et probe dynamique des chunks Next.js.
+- **Observabilité** : Endpoint officiel Prometheus `/metrics` pour le monitoring de latence et santé.
 - **Asynchrone & Synchrone** : Support complet `async/await` avec `httpx`, cache intelligent `hishel` et validation stricte Pydantic v2.
 
 ## Installation
