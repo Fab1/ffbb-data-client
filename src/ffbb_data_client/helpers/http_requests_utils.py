@@ -36,6 +36,9 @@ from ..utils.retry_utils import (
 )
 from ..utils.retry_utils import _get_default_async_client as _shared_async_client
 from ..utils.retry_utils import _get_default_client as _shared_sync_client
+from ..utils.retry_utils import (
+    _is_bunnycdn_block,
+)
 from ..utils.retry_utils import close_default_clients as _close_shared_clients
 from ..utils.retry_utils import (
     make_http_request_with_retry,
@@ -46,29 +49,7 @@ from ..utils.secure_logging import get_secure_logger
 logger = get_secure_logger(__name__)
 
 
-def _is_bunnycdn_block(response: Response) -> bool:
-    """Distingue un 403 BunnyCDN (WAF/HTML) d'un 403 Directus (JSON).
-
-    BunnyCDN renvoie une page HTML (content-type text/html, marqueur
-    "bunnycdn" ou document "<html") quand le User-Agent n'est pas whitelisté.
-    Directus renvoie du JSON avec le code FORBIDDEN.
-    Défensif : retourne False si la réponse est un Mock incomplet (tests).
-    """
-    try:
-        content_type = response.headers.get("content-type", "")
-    except Exception:
-        content_type = ""
-    if "text/html" in str(content_type).lower():
-        return True
-    try:
-        body = response.text or ""
-    except Exception:
-        return False
-    lowered = str(body).lower()
-    if "bunnycdn" in lowered:
-        return True
-    stripped = str(body).strip().lower()
-    return stripped.startswith("<!doctype") or stripped.startswith("<html")
+# _is_bunnycdn_block is imported from ..utils.retry_utils to avoid duplication and import cycles
 
 
 def _raise_for_status(response: Response) -> None:

@@ -222,6 +222,7 @@ def _is_bunnycdn_block(response: Any) -> bool:
             if isinstance(content_type, str) and "text/html" in content_type.lower():
                 return True
     except Exception:
+        # Ignore les erreurs d'inspection d'en-tête (ex: mocks partiels en tests)
         pass
     try:
         body = getattr(response, "text", "")
@@ -232,6 +233,7 @@ def _is_bunnycdn_block(response: Any) -> bool:
             stripped = body.strip().lower()
             return stripped.startswith("<!doctype") or stripped.startswith("<html")
     except Exception:
+        # Ignore les erreurs d'extraction de corps de réponse (ex: mocks partiels ou payloads binaires)
         pass
     return False
 

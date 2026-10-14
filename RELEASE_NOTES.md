@@ -1,6 +1,22 @@
 # Release Notes - FFBB Data Client
 
-## Version 2.4.37 (Latest Release)
+## Version 2.4.38 (Latest Release)
+
+### 🚀 Live Next.js Bundle Probing & Automatic Origin Discovery
+- **Autonomous Origin Extraction**: Introduced `probe_ffbb_web_origins` in `ffbb_data_client.utils.web_probe` to dynamically parse Next.js chunks from `www.ffbb.com` and identify operational Directus (`bo.ffbb.com`, `bo.ffbb.app`) and Meilisearch endpoints.
+- **Discovery Refresh**: Synchronized live API endpoint specifications and models with Directus production back-office.
+
+### 🔒 CodeQL Security & Zero-Cycle Architecture
+- **Cyclic Import Elimination (CodeQL #19)**: Decoupled `TokenManager` from `http_requests_utils`, ensuring a strictly hierarchical utility architecture.
+- **Empty-Except Documentation (CodeQL #66 & #67)**: Clarified defensive boundary inspection in WAF detection logic.
+- **Zero BunnyCDN Fallback**: Completely expunged deprecated `api.ffbb.app` host references from configuration resolution.
+
+### 🌐 Official Website & Metadata Sync
+- Synced `softwareVersion` and documentation links to v2.4.38.
+
+---
+
+## Version 2.4.37
 
 ### 🚀 Directus Production Origin (`bo.ffbb.com`) & Multi-Mirror Failover
 - **Definitive 403 Elimination**: Switched Directus base origin from deprecated `https://api.ffbb.app/` to `https://bo.ffbb.com/` (with automatic failover to `https://bo.ffbb.app/`), bypassing all BunnyCDN WAF 403 Forbidden lockouts.

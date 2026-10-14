@@ -125,13 +125,12 @@ class TokenManager:
         _cache_config: CacheConfig | None = None,
     ) -> GetConfigurationResponse:
         """Fetch configuration without persisting its bearer tokens in HTTP cache."""
-        from ..helpers.http_requests_utils import _is_bunnycdn_block
+        from .retry_utils import _is_bunnycdn_block
 
         candidate_hosts = [
             API_FFBB_BASE_URL,
             "https://bo.ffbb.com/",
             "https://bo.ffbb.app/",
-            "https://api.ffbb.app/",
         ]
         urls_to_try: list[str] = []
         for h in candidate_hosts:

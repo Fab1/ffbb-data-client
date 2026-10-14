@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.38] - 2026-10-14
+
+### Features & Discovery
+- **Live Next.js Bundle Probing**: Ajout du module `web_probe.py` (`probe_ffbb_web_origins`) pour inspecter automatiquement les bundles Next.js de `https://www.ffbb.com` et auto-découvrir les URLs Directus, Meilisearch et statics en production.
+- **Discovery Artefacts Refresh**: Actualisation complète des définitions d'endpoints et types depuis `bo.ffbb.com`.
+
+### Security & Hardening (CodeQL)
+- **Elimination of Cyclic Imports (CodeQL #19)**: Rupture du cycle d'importation entre `helpers.http_requests_utils` et `utils.token_manager` en réutilisant `_is_bunnycdn_block` de `utils.retry_utils`.
+- **Defensive Error Handling (CodeQL #66 & #67)**: Ajout de commentaires explicatifs documentant l'ignorance intentionnelle d'exceptions sur payloads partiels ou mocks dans `_is_bunnycdn_block`.
+- **Directus Origin Invariant**: Retrait définitif du fallback résiduel `https://api.ffbb.app/` dans `TokenManager._fetch_configuration`.
+
+### Documentation & Website
+- **Website Metadata Alignment**: Synchronisation de `softwareVersion` et des liens PyPI vers la version `v2.4.38` sur le site officiel.
+
+
 ## [2.4.37] - 2026-10-13
 
 ### Architecture & Resilience (Directus Production bo.ffbb.com & Multi-Mirror Failover)
