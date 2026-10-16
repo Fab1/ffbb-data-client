@@ -165,6 +165,19 @@ class Test020TokenManager(unittest.TestCase):
         self.assertEqual(tokens.meilisearch_token, "fallback_ms")
         self.assertEqual(mock_http.call_count, 2)
 
+    def test_discovered_healthy_origin_lifecycle(self):
+        """Test that TokenManager can store, use, and clear a discovered healthy origin."""
+        TokenManager.clear_discovered_origin()
+        self.assertIsNone(TokenManager._discovered_healthy_origin)
+
+        TokenManager._discovered_healthy_origin = "https://bo.ffbb.app/"
+        self.assertEqual(
+            TokenManager._discovered_healthy_origin, "https://bo.ffbb.app/"
+        )
+
+        TokenManager.clear_discovered_origin()
+        self.assertIsNone(TokenManager._discovered_healthy_origin)
+
 
 @unittest.skipUnless(
     os.getenv("RUN_FFBB_INTEGRATION") == "1",

@@ -31,6 +31,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .clients.ffbb_data_client import FFBBDataClient
+from .config import API_FFBB_BASE_URL
 from .helpers.normalization import parse_categorie
 from .models.query_fields_manager import QueryFieldsManager
 from .utils.retry_utils import aclose_default_clients
@@ -976,7 +977,7 @@ async def get_club_matches(
     if getattr(org, "logo", None):
         logo_id = getattr(org.logo, "id", None) or org.logo
         if logo_id:
-            club_logo_url = f"https://api.ffbb.com/assets/{logo_id}"
+            club_logo_url = f"{API_FFBB_BASE_URL}assets/{logo_id}"
 
     engagements = getattr(org, "engagements", []) or []
     _poule_name_cache: dict[str, str] = {}
@@ -1191,7 +1192,7 @@ async def get_club_matches(
                     if opp_org and getattr(opp_org, "logo", None):
                         opp_logo_id = getattr(opp_org.logo, "id", None) or opp_org.logo
                         if opp_logo_id:
-                            opponent_logo = f"https://api.ffbb.com/assets/{opp_logo_id}"
+                            opponent_logo = f"{API_FFBB_BASE_URL}assets/{opp_logo_id}"
                     _logo_cache[s_opp_org] = opponent_logo
                 except Exception:
                     _logo_cache[s_opp_org] = None

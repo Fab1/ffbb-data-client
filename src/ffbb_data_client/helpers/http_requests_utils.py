@@ -178,6 +178,12 @@ def to_json_from_response(response: Response) -> Any:
     Returns:
         Any: Parsed JSON payload (dict, list, etc.).
     """
+    # Fast path: parse raw bytes directly via _JSON_LOADS to bypass UTF-8 decoding overhead
+    try:
+        return _JSON_LOADS(response.content)
+    except Exception:
+        pass
+
     data_str = response.text.strip()
 
     try:

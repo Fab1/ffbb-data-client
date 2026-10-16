@@ -14,6 +14,7 @@ import concurrent.futures
 import logging
 import os
 import re
+import time
 import urllib.request
 from typing import Any
 
@@ -24,21 +25,41 @@ logger = logging.getLogger(__name__)
 OFFICIAL_FFBB_WEB_URL = "https://www.ffbb.com"
 
 # Compiled regex patterns using triple quotes to avoid single/double quote delimiter collisions
-RE_CHUNK_PATH = re.compile(r"""(/_next/static/chunks/[a-zA-Z0-9_\.-]+\.js)""")
-RE_BO_URLS = re.compile(r"""DIRECTUS_BO_URL(?:\s*\|\|\s*|:|=|\s+)\s*["']([^"']+)["']""")
-RE_MEILI_URL = re.compile(r"""meilisearchPublicUrl\s*:\s*["']([^"']+)["']""")
+# Support nested paths (e.g. /_next/static/chunks/pages/_app-123.js, /_next/static/chunks/app/layout-456.js)
+RE_CHUNK_PATH = re.compile(r"""(/_next/static/chunks/[a-zA-Z0-9_\./-]+\.js)""")
+# Support NEXT_PUBLIC_DIRECTUS_BO_URL, NEXT_PUBLIC_DIRECTUS_URL, DIRECTUS_BO_URL, and DIRECTUS_URL
+RE_BO_URLS = re.compile(
+    r"""(?:NEXT_PUBLIC_)?DIRECTUS_(?:BO_)?URL(?:\s*\|\|\s*|:|=|\s+)\s*["']([^"']+)["']"""
+)
+RE_MEILI_URL = re.compile(
+    r"""(?:NEXT_PUBLIC_)?(?:meilisearchPublicUrl|MEILISEARCH_URL)\s*(?::|=|\s+)\s*["']([^"']+)["']""",
+    re.IGNORECASE,
+)
 RE_STATICS_URL = re.compile(
-    r"""NEXT_PUBLIC_DIRECTUS_STATICSURL(?:\s*\|\|\s*|:|=|\s+)\s*["']([^"']+)["']"""
+    r"""(?:NEXT_PUBLIC_)?DIRECTUS_STATICSURL(?:\s*\|\|\s*|:|=|\s+)\s*["']([^"']+)["']"""
 )
 RE_FFBB_HOSTS = re.compile(
     r"""https://[a-zA-Z0-9\.-]+(?:\.ffbb\.(?:com|app)|meili[a-zA-Z0-9\.-]*)"""
 )
+
+# In-memory TTL cache for probe results
+_probe_cache: dict[str, Any] = {}
+_probe_cache_timestamp: float = 0.0
+
+
+def clear_probe_cache() -> None:
+    """Clear the in-memory web probe cache."""
+    global _probe_cache, _probe_cache_timestamp
+    _probe_cache = {}
+    _probe_cache_timestamp = 0.0
 
 
 def probe_ffbb_web_origins(
     web_url: str = OFFICIAL_FFBB_WEB_URL,
     timeout: float = 8.0,
     max_chunk_workers: int = 8,
+    ttl: float = 3600.0,
+    force_refresh: bool = False,
 ) -> dict[str, Any]:
     """Inspect official ffbb.com Next.js bundles to extract live backend origins.
 
@@ -56,6 +77,20 @@ def probe_ffbb_web_origins(
         - all_ffbb_hosts: set of all detected https://*.ffbb.(com|app) domains
         - scanned_chunks_count: number of Next.js chunks examined
     """
+    global _probe_cache, _probe_cache_timestamp
+    now = time.time()
+    if (
+        not force_refresh
+        and _probe_cache
+        and (now - _probe_cache_timestamp) < ttl
+        and _probe_cache.get("web_url") == web_url
+    ):
+        logger.debug(
+            "Returning cached FFBB web probe results (age: %.1fs)",
+            now - _probe_cache_timestamp,
+        )
+        return dict(_probe_cache["data"])
+
     proxy_url = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
     handlers: list[urllib.request.BaseHandler] = []
     if proxy_url:
@@ -145,7 +180,7 @@ def probe_ffbb_web_origins(
             # Candidate directus back-office did not respond cleanly to health check
             logger.debug("Directus health probe failed for %s: %s", candidate, exc)
 
-    return {
+    result: dict[str, Any] = {
         "healthy_directus_urls": healthy_directus_urls,
         "directus_bo_urls": directus_bo_urls,
         "meilisearch_urls": meilisearch_urls,
@@ -153,3 +188,9 @@ def probe_ffbb_web_origins(
         "all_ffbb_hosts": sorted(all_ffbb_hosts),
         "scanned_chunks_count": len(chunk_paths),
     }
+
+    if healthy_directus_urls or directus_bo_urls:
+        _probe_cache = {"web_url": web_url, "data": result}
+        _probe_cache_timestamp = now
+
+    return result

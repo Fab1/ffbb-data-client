@@ -76,6 +76,13 @@ class TokenManager:
         )
     """
 
+    _discovered_healthy_origin: str | None = None
+
+    @classmethod
+    def clear_discovered_origin(cls) -> None:
+        """Clear any previously discovered healthy origin."""
+        cls._discovered_healthy_origin = None
+
     @staticmethod
     def get_tokens(
         cache_config: CacheConfig | None = None,
@@ -127,11 +134,12 @@ class TokenManager:
         """Fetch configuration without persisting its bearer tokens in HTTP cache."""
         from .retry_utils import _is_bunnycdn_block
 
-        candidate_hosts = [
-            API_FFBB_BASE_URL,
-            "https://bo.ffbb.com/",
-            "https://bo.ffbb.app/",
-        ]
+        candidate_hosts: list[str] = []
+        if TokenManager._discovered_healthy_origin:
+            candidate_hosts.append(TokenManager._discovered_healthy_origin)
+        for h in [API_FFBB_BASE_URL, "https://bo.ffbb.com/", "https://bo.ffbb.app/"]:
+            if h not in candidate_hosts:
+                candidate_hosts.append(h)
         urls_to_try: list[str] = []
         for h in candidate_hosts:
             u = f"{h.rstrip('/')}/{ENDPOINT_CONFIGURATION}"
@@ -187,6 +195,10 @@ class TokenManager:
                     if not actual_data:
                         continue
 
+                    host_part = config_url.split(f"/{ENDPOINT_CONFIGURATION}")[0]
+                    TokenManager._discovered_healthy_origin = (
+                        host_part.rstrip("/") + "/"
+                    )
                     return GetConfigurationResponse.from_dict(actual_data)
                 except FFBBAuthenticationError as cdn_exc:
                     logger.warning(
@@ -245,6 +257,9 @@ class TokenManager:
                                     d = _json.loads(resp.text.strip())
                                 act_data = d.get("data") if isinstance(d, dict) else d
                                 if act_data:
+                                    TokenManager._discovered_healthy_origin = (
+                                        cand_host.rstrip("/") + "/"
+                                    )
                                     return GetConfigurationResponse.from_dict(act_data)
                         except Exception as rec_exc:
                             last_error = rec_exc
