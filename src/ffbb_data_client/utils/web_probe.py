@@ -44,14 +44,11 @@ RE_FFBB_HOSTS = re.compile(
 
 # In-memory TTL cache for probe results
 _probe_cache: dict[str, Any] = {}
-_probe_cache_timestamp: float = 0.0
 
 
 def clear_probe_cache() -> None:
     """Clear the in-memory web probe cache."""
-    global _probe_cache, _probe_cache_timestamp
-    _probe_cache = {}
-    _probe_cache_timestamp = 0.0
+    _probe_cache.clear()
 
 
 def probe_ffbb_web_origins(
@@ -77,17 +74,17 @@ def probe_ffbb_web_origins(
         - all_ffbb_hosts: set of all detected https://*.ffbb.(com|app) domains
         - scanned_chunks_count: number of Next.js chunks examined
     """
-    global _probe_cache, _probe_cache_timestamp
     now = time.time()
+    cached_ts = float(_probe_cache.get("timestamp", 0.0))
     if (
         not force_refresh
         and _probe_cache
-        and (now - _probe_cache_timestamp) < ttl
+        and (now - cached_ts) < ttl
         and _probe_cache.get("web_url") == web_url
     ):
         logger.debug(
             "Returning cached FFBB web probe results (age: %.1fs)",
-            now - _probe_cache_timestamp,
+            now - cached_ts,
         )
         return dict(_probe_cache["data"])
 
@@ -190,7 +187,7 @@ def probe_ffbb_web_origins(
     }
 
     if healthy_directus_urls or directus_bo_urls:
-        _probe_cache = {"web_url": web_url, "data": result}
-        _probe_cache_timestamp = now
+        _probe_cache.clear()
+        _probe_cache.update({"web_url": web_url, "data": result, "timestamp": now})
 
     return result

@@ -123,7 +123,7 @@ def test_probe_ffbb_web_origins_nested_chunks_and_cache():
 
         # First call: performs network probes
         res1 = probe_ffbb_web_origins(web_url="https://www.ffbb.com", timeout=2.0)
-        assert "https://bo.ffbb.com/" in res1["healthy_directus_urls"]
+        assert any(u == "https://bo.ffbb.com/" for u in res1["healthy_directus_urls"])
         assert res1["scanned_chunks_count"] == 2
         assert mock_open.call_count == 4
 
