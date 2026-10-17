@@ -86,7 +86,7 @@ from ffbb_data_client.models.tournois_facet_distribution import (
 )
 
 # ---------------------------------------------------------------------------
-# Section A: Integration tests - API REST (api.ffbb.app)
+# Section A: Integration tests - API REST (bo.ffbb.com)
 # ---------------------------------------------------------------------------
 
 
@@ -95,7 +95,7 @@ from ffbb_data_client.models.tournois_facet_distribution import (
     "API_FFBB_APP_BEARER_TOKEN not set",
 )
 class Test021RawApiRestConversion(unittest.TestCase):
-    """Integration tests: raw HTTP calls to api.ffbb.app + from_dict conversion."""
+    """Integration tests: raw HTTP calls to bo.ffbb.com + from_dict conversion."""
 
     @classmethod
     def setUpClass(cls) -> None:
