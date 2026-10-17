@@ -315,7 +315,7 @@ class TestBuildChangeSummary:
         return {
             "metadata": {
                 "timestamp": "2026-06-17T00:00:00Z",
-                "api_base_url": "https://api.ffbb.app/",
+                "api_base_url": "https://bo.ffbb.com/",
                 "meilisearch_base_url": "https://meilisearch-prod.ffbb.app/",
                 "openapi_version": "v1",
                 "openapi_sha256": "sha",

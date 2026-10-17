@@ -34,7 +34,7 @@ def _resp(
     status: int, content_type: str, body: bytes, perm: ModuleType | None = None
 ) -> Response:
     del perm
-    req = Request("GET", "https://api.ffbb.app/items/x")
+    req = Request("GET", "https://bo.ffbb.com/items/x")
     return Response(
         status, request=req, headers={"content-type": content_type}, content=body
     )

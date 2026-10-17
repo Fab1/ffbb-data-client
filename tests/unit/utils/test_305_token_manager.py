@@ -144,7 +144,7 @@ class Test020TokenManager(unittest.TestCase):
         from httpx import Request, Response
 
         # First call (primary UA): 403 BunnyCDN HTML block
-        req = Request("GET", "https://api.ffbb.app/items/configuration")
+        req = Request("GET", "https://bo.ffbb.com/items/configuration")
         blocked_resp = Response(
             403,
             request=req,

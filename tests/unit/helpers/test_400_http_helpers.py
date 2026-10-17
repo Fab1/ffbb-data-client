@@ -235,12 +235,12 @@ class Test045HttpHelpers(unittest.TestCase):
         self.assertIn("limit=10", result)
 
     def test_019_url_with_params_empty(self) -> None:
-        result = url_with_params("https://api.ffbb.app/items", {})
-        self.assertEqual(result, "https://api.ffbb.app/items")
+        result = url_with_params("https://bo.ffbb.com/items", {})
+        self.assertEqual(result, "https://bo.ffbb.com/items")
 
     def test_020_url_with_params_none_values(self) -> None:
-        result = url_with_params("https://api.ffbb.app/items", {"key": None})
-        self.assertEqual(result, "https://api.ffbb.app/items")
+        result = url_with_params("https://bo.ffbb.com/items", {"key": None})
+        self.assertEqual(result, "https://bo.ffbb.com/items")
 
     @patch("ffbb_data_client.utils.token_manager.TokenManager.get_tokens")
     @patch("ffbb_data_client.helpers.http_requests_utils.httpx.Client.get")
@@ -263,7 +263,7 @@ class Test045HttpHelpers(unittest.TestCase):
         mock_get_tokens.return_value = mock_tokens
 
         headers = {"Authorization": "Bearer old_token"}
-        response = http_get("https://api.ffbb.app/items/test", headers)
+        response = http_get("https://bo.ffbb.com/items/test", headers)
 
         self.assertEqual(response, mock_resp_200)
         self.assertEqual(headers["Authorization"], "Bearer new_api_token")
@@ -292,7 +292,7 @@ class Test045HttpHelpers(unittest.TestCase):
 
         headers = {"Authorization": "Bearer old_token"}
         response = http_post(
-            "https://api.ffbb.app/items/test", headers, data={"foo": "bar"}
+            "https://bo.ffbb.com/items/test", headers, data={"foo": "bar"}
         )
 
         self.assertEqual(response, mock_resp_200)
@@ -301,7 +301,7 @@ class Test045HttpHelpers(unittest.TestCase):
         self.assertEqual(mock_post.call_count, 2)
 
     def test_023_raise_for_status_bunnycdn_html_403(self) -> None:
-        request = Request("GET", "https://api.ffbb.app/items/ffbbserver_competitions/1")
+        request = Request("GET", "https://bo.ffbb.com/items/ffbbserver_competitions/1")
         response = Response(
             403,
             request=request,
@@ -313,7 +313,7 @@ class Test045HttpHelpers(unittest.TestCase):
         self.assertIn("BunnyCDN", str(ctx.exception))
 
     def test_024_raise_for_status_directus_json_403(self) -> None:
-        request = Request("GET", "https://api.ffbb.app/items/ffbbserver_competitions/1")
+        request = Request("GET", "https://bo.ffbb.com/items/ffbbserver_competitions/1")
         response = Response(
             403,
             request=request,
@@ -334,7 +334,7 @@ class Test045HttpHelpers(unittest.TestCase):
 
         from httpx import Request, Response
 
-        req = Request("GET", "https://api.ffbb.app/items/competitions")
+        req = Request("GET", "https://bo.ffbb.com/items/competitions")
         blocked_resp = Response(
             403,
             request=req,
@@ -354,7 +354,7 @@ class Test045HttpHelpers(unittest.TestCase):
         loop = asyncio.new_event_loop()
         try:
             resp = loop.run_until_complete(
-                http_get_async("https://api.ffbb.app/items/competitions", headers)
+                http_get_async("https://bo.ffbb.com/items/competitions", headers)
             )
         finally:
             loop.close()
@@ -375,7 +375,7 @@ class Test045HttpHelpers(unittest.TestCase):
 
         from httpx import Request, Response
 
-        req = Request("POST", "https://api.ffbb.app/items/search")
+        req = Request("POST", "https://bo.ffbb.com/items/search")
         blocked_resp = Response(
             403,
             request=req,
@@ -396,7 +396,7 @@ class Test045HttpHelpers(unittest.TestCase):
         try:
             resp = loop.run_until_complete(
                 http_post_async(
-                    "https://api.ffbb.app/items/search", headers, data={"query": "test"}
+                    "https://bo.ffbb.com/items/search", headers, data={"query": "test"}
                 )
             )
         finally:

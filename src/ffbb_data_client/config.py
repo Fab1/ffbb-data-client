@@ -9,7 +9,7 @@ API_FFBB_BASE_URL = (
 MEILISEARCH_BASE_URL = "https://meilisearch-prod.ffbb.app/"
 
 # HTTP Headers
-# BunnyCDN WAF on Directus (api.ffbb.app) blocks "okhttp/*" over IPv4 with HTTP 403 Forbidden.
+# L'ancienne pullzone BunnyCDN (api.ffbb.app / api.ffbb.com) est verrouillée en 403. Utilisation directe de bo.ffbb.com.
 # Use an authentic iOS Safari User-Agent by default, overridable via FFBB_USER_AGENT.
 DEFAULT_USER_AGENT = os.getenv(
     "FFBB_USER_AGENT",

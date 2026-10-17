@@ -46,7 +46,7 @@ from .meilisearch_ffbb_client import MeilisearchFFBBClient
 
 
 class _RestFacade:
-    """Facade delegating all REST API (Directus api.ffbb.app) calls to ApiFFBBAppClient."""
+    """Facade delegating all REST API (Directus bo.ffbb.com) calls to ApiFFBBAppClient."""
 
     _BATCH_CHUNK_SIZE = 50
 
@@ -91,7 +91,7 @@ class _RestFacade:
         )
 
     # ------------------------------------------------------------------
-    # REST API — api.ffbb.app (sync)
+    # REST API — bo.ffbb.com (sync)
     # ------------------------------------------------------------------
 
     def get_configuration(
